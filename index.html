@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéWorld - Explore o Universo Pokémon</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins & Press Start 2P -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0f172a;
+        }
+        .pixel-font {
+            font-family: 'Press Start 2P', monospace;
+        }
+        /* Custom Glowing effects */
+        .glow-red {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+        .glow-yellow {
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+        }
+        /* Silhouette effect for the mini-game */
+        .silhouette {
+            filter: brightness(0) invert(0);
+            transition: filter 0.5s ease-in-out;
+        }
+        .revealed {
+            filter: none;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pokeRed: '#FF3E3E',
+                        pokeBlue: '#3B4CCA',
+                        pokeYellow: '#FFDE00',
+                        pokeGold: '#B3A125',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-slate-100 overflow-x-hidden">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <svg class="w-10 h-10 animate-spin-slow group-hover:rotate-180 transition-transform duration-700" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="white" stroke="#000" stroke-width="6"/>
+                    <path d="M5 50H95" stroke="#000" stroke-width="8"/>
+                    <path d="M5 50C5 25.1472 25.1472 5 50 5C74.8528 5 95 25.1472 95 50" fill="#FF3E3E" stroke="#000" stroke-width="6"/>
+                    <circle cx="50" cy="50" r="18" fill="white" stroke="#000" stroke-width="8"/>
+                    <circle cx="50" cy="50" r="8" fill="#475569" />
+                </svg>
+                <span class="text-2xl font-black tracking-wider text-pokeYellow drop-shadow-[0_2px_2px_rgba(59,76,202,1)]">PokéWorld</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center gap-8 font-medium">
+                <a href="#inicio" class="text-slate-300 hover:text-pokeYellow transition">Início</a>
+                <a href="#pokedex" class="text-slate-300 hover:text-pokeYellow transition">Pokédex</a>
+                <a href="#minigame" class="text-slate-300 hover:text-pokeYellow transition">Desafio</a>
+                <a href="#criador" class="text-slate-300 hover:text-pokeYellow transition">Criar Card</a>
+            </nav>
+
+            <!-- Action Button -->
+            <div class="hidden md:flex">
+                <a href="#pokedex" class="bg-pokeRed hover:bg-red-600 text-white font-bold px-6 py-2.5 rounded-full transition duration-300 transform hover:scale-105 shadow-lg glow-red">
+                    Explorar PokéWorld
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-slate-300 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-drawer" class="hidden md:hidden bg-slate-950 border-b border-slate-800 px-4 py-6 space-y-4">
+            <a href="#inicio" class="block text-slate-300 hover:text-pokeYellow text-lg transition menu-link">Início</a>
+            <a href="#pokedex" class="block text-slate-300 hover:text-pokeYellow text-lg transition menu-link">Pokédex</a>
+            <a href="#minigame" class="block text-slate-300 hover:text-pokeYellow text-lg transition menu-link">Desafio</a>
+            <a href="#criador" class="block text-slate-300 hover:text-pokeYellow text-lg transition menu-link">Criar Card</a>
+            <a href="#pokedex" class="block text-center bg-pokeRed text-white font-bold py-3 rounded-xl transition menu-link">Explorar Pokédex</a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="inicio" class="relative pt-32 pb-20 md:py-40 bg-radial-gradient overflow-hidden">
+        <!-- Background elements decoration -->
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-pokeRed/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-pokeBlue/20 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Hero Content -->
+                <div class="space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-4 py-1.5 rounded-full text-sm text-pokeYellow">
+                        <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                        <span>Temporada de Descobertas de 2026</span>
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tight">
+                        Sua Própria Jornada <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-pokeYellow via-amber-400 to-pokeRed">Pokémon</span> Começa Aqui!
+                    </h1>
+                    <p class="text-slate-300 text-lg md:text-xl font-light max-w-xl mx-auto lg:mx-0">
+                        Explore informações detalhadas de seus companheiros preferidos, jogue desafios lendários e monte o seu próprio card personalizado!
+                    </p>
+                    
+                    <!-- Search Input inside Hero -->
+                    <div class="pt-4 max-w-md mx-auto lg:mx-0">
+                        <form onsubmit="event.preventDefault(); document.getElementById('pokedex').scrollIntoView();" class="relative flex items-center bg-slate-800/90 border-2 border-slate-700 focus-within:border-pokeYellow rounded-2xl p-2 transition-all duration-300">
+                            <input type="text" id="hero-search" placeholder="Qual Pokémon você procura?" class="bg-transparent w-full px-4 py-3 text-slate-100 outline-none placeholder-slate-400">
+                            <button type="submit" class="bg-pokeYellow hover:bg-yellow-500 text-slate-950 font-bold px-6 py-3 rounded-xl transition duration-300 shrink-0">
+                                Buscar
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Quick stats/metrics -->
+                    <div class="grid grid-cols-3 gap-4 pt-6 max-w-md mx-auto lg:mx-0 text-center">
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+                            <p class="text-2xl sm:text-3xl font-bold text-pokeYellow">1000+</p>
+                            <p class="text-xs sm:text-sm text-slate-400">Criaturas</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+                            <p class="text-2xl sm:text-3xl font-bold text-pokeRed">18</p>
+                            <p class="text-xs sm:text-sm text-slate-400">Tipos de Energia</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+                            <p class="text-2xl sm:text-3xl font-bold text-emerald-400">100%</p>
+                            <p class="text-xs sm:text-sm text-slate-400">Interativo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image/Visual -->
+                <div class="relative flex justify-center items-center">
+                    <!-- Tech Ring Background decoration -->
+                    <div class="absolute w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] rounded-full border border-slate-800 animate-spin-slow"></div>
+                    <div class="absolute w-[280px] h-[280px] sm:w-[380px] sm:h-[380px] rounded-full border border-dashed border-slate-700/60 animate-reverse-spin"></div>
+                    
+                    <!-- Main Hero Image (Charizard) -->
+                    <img id="hero-pokemon" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" 
+                         alt="Charizard" 
+                         class="w-72 sm:w-96 h-auto drop-shadow-[0_15px_15px_rgba(239,68,68,0.3)] transform hover:scale-105 transition duration-500 z-10">
+
+                    <!-- Badge -->
+                    <div class="absolute bottom-4 right-10 bg-slate-900/90 border border-slate-700 p-4 rounded-2xl shadow-xl z-20 flex items-center gap-3 animate-bounce">
+                        <div class="p-2 bg-red-500/20 rounded-lg text-pokeRed">
+                            🔥
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Destaque do Dia</p>
+                            <p class="text-sm font-bold text-white">Charizard #006</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE POKEDEX SECTION -->
+    <section id="pokedex" class="py-20 bg-slate-900 border-t border-slate-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Pokédex Oficial de Campo</h2>
+                <p class="text-slate-400 mt-3 text-lg">Selecione filtros rápidos por tipos ou digite no campo de pesquisa para encontrar seu parceiro de batalha.</p>
+            </div>
+
+            <!-- Controls (Search + Filters) -->
+            <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700/60 shadow-lg space-y-6 mb-12">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <!-- Live Search -->
+                    <div class="relative w-full md:max-w-md">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" id="pokedex-search" placeholder="Buscar Pokémon por nome ou ID..." class="w-full bg-slate-900 border border-slate-700 focus:border-pokeYellow rounded-xl pl-11 pr-4 py-3 outline-none text-slate-100 transition">
+                    </div>
+
+                    <!-- Reset filters button -->
+                    <button onclick="resetFilters()" class="text-sm font-semibold text-pokeYellow hover:text-amber-300 transition shrink-0 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.283 8H16"></path></svg>
+                        Limpar Filtros
+                    </button>
+                </div>
+
+                <!-- Types Filter Chips -->
+                <div>
+                    <p class="text-sm font-medium text-slate-400 mb-3">Filtrar por Tipo Primário:</p>
+                    <div class="flex flex-wrap gap-2" id="type-filters-container">
+                        <!-- Dynamic filter chips inserted here by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pokemon Cards Grid -->
+            <div id="pokedex-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Dynamic Pokemon Cards inserted here by JS -->
+                <div class="col-span-full text-center py-12 text-slate-500">Carregando Pokédex...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETAILED POKÉMON MODAL -->
+    <div id="pokemon-modal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl relative transform transition-all scale-95 duration-300" id="modal-container">
+            <!-- Modal Header Accent Background -->
+            <div id="modal-accent-bg" class="h-32 w-full absolute top-0 left-0 opacity-20"></div>
+
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white rounded-full p-2 transition z-10 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <!-- Modal Content inside wrapper for padding -->
+            <div class="p-6 pt-16 relative">
+                <!-- Pokémon Avatar Graphic -->
+                <div class="flex justify-center -mt-24 mb-6">
+                    <img id="modal-image" class="w-48 h-48 drop-shadow-[0_10px_10px_rgba(255,255,255,0.15)] z-10" src="" alt="">
+                </div>
+
+                <!-- Basic Info -->
+                <div class="text-center space-y-2">
+                    <span id="modal-id" class="text-sm font-semibold tracking-wider text-slate-400"></span>
+                    <h3 id="modal-name" class="text-3xl font-extrabold capitalize text-white"></h3>
+                    <div id="modal-types" class="flex justify-center gap-2 pt-1">
+                        <!-- Types Badges -->
+                    </div>
+                </div>
+
+                <!-- Physics stats (Weight & Height) -->
+                <div class="grid grid-cols-2 gap-4 mt-6 text-center">
+                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Altura</p>
+                        <p id="modal-height" class="text-lg font-bold text-slate-200"></p>
+                    </div>
+                    <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Peso</p>
+                        <p id="modal-weight" class="text-lg font-bold text-slate-200"></p>
+                    </div>
+                </div>
+
+                <!-- Base Stats Progress Bars -->
+                <div class="mt-6 space-y-4">
+                    <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wider">Atributos Base</h4>
+                    
+                    <div class="space-y-3" id="modal-stats-container">
+                        <!-- Base stats generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Description/Flavor text -->
+                <p id="modal-desc" class="text-slate-400 text-sm mt-6 text-center leading-relaxed italic border-t border-slate-800 pt-4"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MINI-GAME: WHO'S THAT POKEMON -->
+    <section id="minigame" class="py-20 bg-slate-950 border-t border-slate-800 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="pixel-font text-xs text-pokeYellow tracking-widest bg-yellow-400/10 px-3 py-1 rounded">MINIGAME</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold mt-3">Quem é esse Pokémon?</h2>
+                <p class="text-slate-400 mt-2">Acerte qual é a criatura escondida e suba de nível como mestre!</p>
+            </div>
+
+            <!-- Game Board Container -->
+            <div class="bg-slate-900 border-4 border-slate-800 rounded-3xl overflow-hidden p-6 md:p-10 shadow-2xl relative">
+                
+                <!-- Game Score & Status -->
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🏆</span>
+                        <div>
+                            <p class="text-xs text-slate-400">Pontuação</p>
+                            <p id="game-score" class="text-lg font-black text-pokeYellow">0</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <p class="text-xs text-slate-400">Sequência Máxima</p>
+                            <p id="game-streak" class="text-lg font-black text-emerald-400">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- Silhouette Visual Area -->
+                    <div class="relative flex items-center justify-center bg-slate-950 rounded-2xl h-64 border-2 border-slate-800 overflow-hidden">
+                        <!-- Forest/Grass BG Art using CSS -->
+                        <div class="absolute inset-0 bg-gradient-to-b from-teal-900/40 via-slate-900 to-slate-950"></div>
+                        <!-- Pokeball circle glow element in BG -->
+                        <div class="absolute w-44 h-44 rounded-full border-4 border-slate-800 opacity-20 flex items-center justify-center">
+                            <div class="w-16 h-16 rounded-full border-4 border-slate-800"></div>
+                        </div>
+
+                        <!-- Pokémon Mystery Image -->
+                        <img id="game-pokemon-img" class="w-44 h-44 silhouette z-10 select-none pointer-events-none" src="" alt="Mystery Pokemon">
+                    </div>
+
+                    <!-- Answers options -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Selecione o palpite correto:</p>
+                        <div id="game-options" class="grid grid-cols-1 gap-3">
+                            <!-- Option Buttons generated dynamically -->
+                        </div>
+
+                        <!-- Custom feedback Alert Box -->
+                        <div id="game-feedback" class="hidden p-4 rounded-xl text-center font-bold text-sm transition-all duration-300">
+                            <!-- Feedbacks -->
+                        </div>
+
+                        <!-- Next Game Action -->
+                        <button id="game-next-btn" onclick="startNewGameRound()" class="hidden w-full bg-pokeYellow text-slate-950 font-bold py-3.5 rounded-xl hover:bg-yellow-500 transition shadow-lg glow-yellow mt-4 flex items-center justify-center gap-2">
+                            Avançar para o Próximo ➡️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POKÉMON CARD CREATOR -->
+    <section id="criador" class="py-20 bg-slate-900 border-t border-slate-800 relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Criador de Card de Treinador</h2>
+                <p class="text-slate-400 mt-2">Crie sua licença oficial de Mestre ou Treinador Pokémon. Personalize dados e salve ou tire print para compartilhar!</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                
+                <!-- Controls Panel -->
+                <div class="bg-slate-800/60 p-6 rounded-3xl border border-slate-700/60 shadow-xl space-y-6">
+                    <h3 class="text-lg font-bold text-white border-b border-slate-700 pb-3">Painel de Customização</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Nome do Treinador</label>
+                            <input type="text" id="card-input-name" value="Ash Ketchum" oninput="updateTrainerCard()" class="w-full bg-slate-900 border border-slate-700 focus:border-pokeYellow rounded-xl px-4 py-2.5 outline-none text-slate-100">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Região de Origem</label>
+                            <select id="card-input-region" onchange="updateTrainerCard()" class="w-full bg-slate-900 border border-slate-700 focus:border-pokeYellow rounded-xl px-4 py-2.5 outline-none text-slate-100">
+                                <option value="Kanto">Kanto</option>
+                                <option value="Johto">Johto</option>
+                                <option value="Hoenn">Hoenn</option>
+                                <option value="Sinnoh">Sinnoh</option>
+                                <option value="Unova">Unova</option>
+                                <option value="Kalos">Kalos</option>
+                                <option value="Alola">Alola</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Escolha seu Pokémon Parceiro</label>
+                            <select id="card-input-pokemon" onchange="updateTrainerCard()" class="w-full bg-slate-900 border border-slate-700 focus:border-pokeYellow rounded-xl px-4 py-2.5 outline-none text-slate-100">
+                                <!-- Generated Dynamically -->
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Avatar do Treinador (Estilo)</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="setTrainerAvatar('trainer_red')" class="avatar-select-btn border-2 border-pokeYellow bg-slate-900 p-2 rounded-xl flex justify-center"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/1.png" alt="Red" class="h-12 w-auto"></button>
+                                <button onclick="setTrainerAvatar('trainer_blue')" class="avatar-select-btn border border-slate-700 bg-slate-900 p-2 rounded-xl flex justify-center"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/2.png" alt="Blue" class="h-12 w-auto"></button>
+                                <button onclick="setTrainerAvatar('trainer_leaf')" class="avatar-select-btn border border-slate-700 bg-slate-900 p-2 rounded-xl flex justify-center"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/10.png" alt="Leaf" class="h-12 w-auto"></button>
+                                <button onclick="setTrainerAvatar('trainer_ethan')" class="avatar-select-btn border border-slate-700 bg-slate-900 p-2 rounded-xl flex justify-center"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/80.png" alt="Ethan" class="h-12 w-auto"></button>
+                            </div>
+                        </div>
+
+                        <!-- Card Color Theme -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">Fundo do Card</label>
+                            <div class="flex gap-3">
+                                <button onclick="setCardTheme('bg-gradient-to-br from-red-600 to-amber-600')" class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-amber-600 border border-white focus:outline-none"></button>
+                                <button onclick="setCardTheme('bg-gradient-to-br from-blue-600 to-indigo-800')" class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-800 border border-white focus:outline-none"></button>
+                                <button onclick="setCardTheme('bg-gradient-to-br from-emerald-600 to-teal-800')" class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-teal-800 border border-white focus:outline-none"></button>
+                                <button onclick="setCardTheme('bg-gradient-to-br from-slate-800 to-slate-950')" class="w-8 h-8 rounded-full bg-gradient-to-br from-slate-800 to-slate-950 border border-white focus:outline-none"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Card Preview -->
+                <div class="flex justify-center">
+                    <div id="trainer-card-preview" class="w-full max-w-md bg-gradient-to-br from-red-600 to-amber-600 rounded-3xl p-6 shadow-2xl relative overflow-hidden border-4 border-yellow-400 aspect-[1.58/1]">
+                        <!-- Hologram overlay decorative line -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/5 pointer-events-none"></div>
+
+                        <!-- Header card info -->
+                        <div class="flex justify-between items-center border-b border-white/20 pb-2 mb-4">
+                            <span class="pixel-font text-[10px] sm:text-xs text-white tracking-widest uppercase">LICENÇA DE TREINADOR</span>
+                            <span class="text-xs text-yellow-300 font-bold tracking-wider">ID: 2026-009</span>
+                        </div>
+
+                        <!-- Grid Trainer Info -->
+                        <div class="grid grid-cols-3 gap-4 h-full relative z-10">
+                            <!-- Avatar photo frame -->
+                            <div class="bg-slate-900/80 border-2 border-white/40 rounded-2xl flex flex-col items-center justify-center p-1 relative overflow-hidden aspect-square self-center">
+                                <img id="card-trainer-avatar" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/1.png" alt="Avatar" class="h-20 w-auto drop-shadow-md">
+                                <div class="absolute bottom-1 bg-black/50 text-[9px] px-1.5 rounded text-yellow-300">Avatar</div>
+                            </div>
+
+                            <!-- Text Details -->
+                            <div class="col-span-2 space-y-2 flex flex-col justify-center">
+                                <div>
+                                    <p class="text-[9px] uppercase tracking-wider text-white/70">Nome</p>
+                                    <p id="card-trainer-name" class="text-base sm:text-lg font-extrabold text-white leading-tight">Ash Ketchum</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-wider text-white/70">Região</p>
+                                        <p id="card-trainer-region" class="text-xs sm:text-sm font-bold text-white">Kanto</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] uppercase tracking-wider text-white/70">Parceiro</p>
+                                        <p id="card-trainer-partner" class="text-xs sm:text-sm font-bold text-yellow-300">Pikachu</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Partner visual badge at bottom right -->
+                        <div class="absolute right-3 bottom-3 flex items-center justify-center p-1 bg-slate-950/70 border border-white/30 rounded-full w-20 h-20 overflow-hidden">
+                            <img id="card-pokemon-partner-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Parceiro" class="w-16 h-16 drop-shadow-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-slate-800 pb-8 mb-8">
+                <!-- Brand logo left -->
+                <a href="#" class="flex items-center gap-2">
+                    <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="white" stroke="#000" stroke-width="6"/>
+                        <path d="M5 50H95" stroke="#000" stroke-width="8"/>
+                        <path d="M5 50C5 25.1472 25.1472 5 50 5C74.8528 5 95 25.1472 95 50" fill="#FF3E3E" stroke="#000" stroke-width="6"/>
+                        <circle cx="50" cy="50" r="18" fill="white" stroke="#000" stroke-width="8"/>
+                    </svg>
+                    <span class="text-xl font-bold tracking-wider text-pokeYellow">PokéWorld</span>
+                </a>
+                
+                <!-- Quick links -->
+                <div class="flex flex-wrap justify-center gap-6 text-sm">
+                    <a href="#inicio" class="hover:text-white transition">Início</a>
+                    <a href="#pokedex" class="hover:text-white transition">Pokédex</a>
+                    <a href="#minigame" class="hover:text-white transition">Desafio de Adivinhação</a>
+                    <a href="#criador" class="hover:text-white transition">Criador de Card</a>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                <p>&copy; 2026 PokéWorld. Criado para fãs de Pokémon.</p>
+                <p>Todas as marcas registradas e imagens pertencem aos seus respectivos proprietários.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT LOGIC -->
+    <script>
+        // Core Pokemon Dataset
+        const pokemons = [
+            { id: 25, name: "Pikachu", types: ["Elétrico"], img: "25", height: "0.4m", weight: "6.0kg", stats: { hp: 35, attack: 55, defense: 40, speed: 90 }, desc: "Quando vários destes Pokémon se reúnem, sua eletricidade pode acumular e causar tempestades de raios." },
+            { id: 6, name: "Charizard", types: ["Fogo", "Voador"], img: "6", height: "1.7m", weight: "90.5kg", stats: { hp: 78, attack: 84, defense: 78, speed: 100 }, desc: "Cospe fogo ardente que derrete pedras. É conhecido por causar incêndios florestais acidentais." },
+            { id: 9, name: "Blastoise", types: ["Água"], img: "9", height: "1.6m", weight: "85.5kg", stats: { hp: 79, attack: 83, defense: 100, speed: 78 }, desc: "Um Pokémon brutal com canhões d'água pressurizados pressurizados em sua carapaça." },
+            { id: 3, name: "Venusaur", types: ["Planta", "Venenoso"], img: "3", height: "2.0m", weight: "100.0kg", stats: { hp: 80, attack: 82, defense: 83, speed: 80 }, desc: "Há uma grande flor em suas costas. Diz-se que ela assume cores vivas se receber muita nutrição solar." },
+            { id: 150, name: "Mewtwo", types: ["Psíquico"], img: "150", height: "2.0m", weight: "122.0kg", stats: { hp: 106, attack: 110, defense: 90, speed: 130 }, desc: "Foi criado por manipulação genética. Embora o poder científico dos humanos o tenha criado, eles falharam em dar-lhe um coração compassivo." },
+            { id: 94, name: "Gengar", types: ["Fantasma", "Venenoso"], img: "94", height: "1.5m", weight: "40.5kg", stats: { hp: 60, attack: 65, defense: 60, speed: 110 }, desc: "Esconde-se nas sombras de qualquer pessoa à noite, absorvendo gradualmente o calor das suas vítimas." },
+            { id: 133, name: "Eevee", types: ["Normal"], img: "133", height: "0.3m", weight: "6.5kg", stats: { hp: 55, attack: 55, defense: 50, speed: 55 }, desc: "Tem uma estrutura genética instável que de repente se transforma sob influências variadas." },
+            { id: 448, name: "Lucario", types: ["Lutador", "Aço"], img: "448", height: "1.2m", weight: "54.0kg", stats: { hp: 70, attack: 110, defense: 70, speed: 90 }, desc: "Pode sentir as ondas de aura emitidas pelos oponentes para ler as suas próximas ações e estratégias." },
+            { id: 143, name: "Snorlax", types: ["Normal"], img: "143", height: "2.1m", weight: "460.0kg", stats: { hp: 160, attack: 110, defense: 65, speed: 30 }, desc: "Seu estômago é tão forte que ele pode comer até mesmo alimentos mofados ou estragados sem passar mal." },
+            { id: 197, name: "Umbreon", types: ["Sombrio"], img: "197", height: "1.0m", weight: "27.0kg", stats: { hp: 95, attack: 65, defense: 110, speed: 65 }, desc: "Quando exposto à luz da lua, os padrões em seu corpo brilham intensamente, gerando mistério." },
+            { id: 700, name: "Sylveon", types: ["Fada"], img: "700", height: "1.0m", weight: "23.5kg", stats: { hp: 95, attack: 65, defense: 65, speed: 60 }, desc: "Envia ondas calmantes por meio de suas antenas em formato de fita para acalmar conflitos." },
+            { id: 149, name: "Dragonite", types: ["Dragão", "Voador"], img: "149", height: "2.2m", weight: "210.0kg", stats: { hp: 91, attack: 134, defense: 95, speed: 80 }, desc: "Um Pokémon extremamente marinho que se diz guiar tripulados naufragados até a segurança." }
+        ];
+
+        // Type color definitions
+        const typeColors = {
+            "Elétrico": "bg-yellow-500 text-slate-900 border-yellow-600 shadow-yellow-500/20",
+            "Fogo": "bg-red-500 text-white border-red-600 shadow-red-500/20",
+            "Água": "bg-blue-500 text-white border-blue-600 shadow-blue-500/20",
+            "Planta": "bg-emerald-500 text-white border-emerald-600 shadow-emerald-500/20",
+            "Psíquico": "bg-pink-500 text-white border-pink-600 shadow-pink-500/20",
+            "Fantasma": "bg-purple-600 text-white border-purple-700 shadow-purple-600/20",
+            "Normal": "bg-slate-500 text-white border-slate-600 shadow-slate-500/20",
+            "Lutador": "bg-orange-600 text-white border-orange-700 shadow-orange-600/20",
+            "Aço": "bg-zinc-400 text-slate-950 border-zinc-500 shadow-zinc-400/20",
+            "Voador": "bg-cyan-500 text-white border-cyan-600 shadow-cyan-500/20",
+            "Venenoso": "bg-indigo-600 text-white border-indigo-700 shadow-indigo-600/20",
+            "Sombrio": "bg-neutral-800 text-white border-neutral-900 shadow-neutral-800/20",
+            "Fada": "bg-rose-400 text-slate-950 border-rose-500 shadow-rose-400/20",
+            "Dragão": "bg-violet-700 text-white border-violet-800 shadow-violet-700/20"
+        };
+
+        // State management
+        let selectedTypeFilter = null;
+        let searchQuery = "";
+        
+        // Game State Variables
+        let gameScore = 0;
+        let gameStreak = 0;
+        let currentGamePokemon = null;
+
+        // Card Trainer State
+        let selectedCardTheme = "bg-gradient-to-br from-red-600 to-amber-600";
+        let selectedTrainerAvatarUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/1.png";
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTypeFilters();
+            renderPokedex();
+            startNewGameRound();
+            setupCardCreatorOptions();
+            updateTrainerCard();
+
+            // Setup events
+            document.getElementById('pokedex-search').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderPokedex();
+            });
+
+            document.getElementById('hero-search').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                document.getElementById('pokedex-search').value = searchQuery;
+                renderPokedex();
+            });
+
+            // Mobile menu toggle
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const drawer = document.getElementById('mobile-drawer');
+            menuBtn.addEventListener('click', () => {
+                drawer.classList.toggle('hidden');
+            });
+
+            // Close mobile menu on links click
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    drawer.classList.add('hidden');
+                });
+            });
+        });
+
+        // 1. POKÉDEX RENDER FUNCTION
+        function renderPokedex() {
+            const grid = document.getElementById('pokedex-grid');
+            grid.innerHTML = "";
+
+            const filtered = pokemons.filter(pokemon => {
+                const matchesSearch = pokemon.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      String(pokemon.id).includes(searchQuery);
+                const matchesType = !selectedTypeFilter || pokemon.types.includes(selectedTypeFilter);
+                return matchesSearch && matchesType;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <span class="text-4xl">🔍</span>
+                        <p class="text-slate-400 mt-2">Nenhum Pokémon encontrado com os filtros selecionados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(pokemon => {
+                const primaryType = pokemon.types[0];
+                const typeClasses = typeColors[primaryType] || "bg-slate-500 text-white";
+
+                // Formatted ID e.g., #025
+                const formattedId = `#${String(pokemon.id).padStart(3, '0')}`;
+
+                const cardHtml = `
+                    <div onclick="openModal(${pokemon.id})" class="group cursor-pointer bg-slate-800/80 border border-slate-700/60 rounded-3xl p-5 hover:border-pokeYellow transition duration-300 transform hover:-translate-y-1.5 shadow-md flex flex-col justify-between">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold text-slate-500">${formattedId}</span>
+                            <span class="text-xs px-2.5 py-1 rounded-full border ${typeClasses} font-semibold">${primaryType}</span>
+                        </div>
+                        
+                        <div class="flex justify-center my-4 relative">
+                            <!-- Background glow pulse -->
+                            <div class="absolute inset-0 bg-white/5 rounded-full filter blur-xl group-hover:scale-125 transition-transform"></div>
+                            <img class="w-32 h-32 relative z-10 transition duration-300 group-hover:scale-110 drop-shadow-[0_4px_6px_rgba(0,0,0,0.15)]" 
+                                 src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.img}.png" 
+                                 alt="${pokemon.name}">
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-white capitalize group-hover:text-pokeYellow transition mb-3">${pokemon.name}</h3>
+                            <div class="flex justify-between items-center text-xs text-slate-400 border-t border-slate-700/60 pt-3">
+                                <span>Ataque: <strong>${pokemon.stats.attack}</strong></span>
+                                <span>Velocidade: <strong>${pokemon.stats.speed}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        // Render Type Chips
+        function renderTypeFilters() {
+            const container = document.getElementById('type-filters-container');
+            const allTypes = [...new Set(pokemons.flatMap(p => p.types))];
+
+            allTypes.forEach(type => {
+                const colorClass = typeColors[type] || "bg-slate-500";
+                const chip = document.createElement('button');
+                chip.textContent = type;
+                chip.className = `px-4 py-2 rounded-xl text-xs font-bold border border-transparent shadow-sm hover:scale-105 transition-all ${colorClass} filter saturate-[0.85]`;
+                chip.id = `type-btn-${type}`;
+                chip.onclick = () => selectTypeFilter(type);
+                container.appendChild(chip);
+            });
+        }
+
+        function selectTypeFilter(type) {
+            // Remove selection border/glowing from all
+            document.querySelectorAll('[id^="type-btn-"]').forEach(el => {
+                el.classList.remove('ring-4', 'ring-pokeYellow', 'saturate-150');
+            });
+
+            if (selectedTypeFilter === type) {
+                selectedTypeFilter = null;
+            } else {
+                selectedTypeFilter = type;
+                const activeBtn = document.getElementById(`type-btn-${type}`);
+                if (activeBtn) {
+                    activeBtn.classList.add('ring-4', 'ring-pokeYellow', 'saturate-150');
+                }
+            }
+            renderPokedex();
+        }
+
+        function resetFilters() {
+            selectedTypeFilter = null;
+            searchQuery = "";
+            document.getElementById('pokedex-search').value = "";
+            document.querySelectorAll('[id^="type-btn-"]').forEach(el => {
+                el.classList.remove('ring-4', 'ring-pokeYellow', 'saturate-150');
+            });
+            renderPokedex();
+        }
+
+        // 2. MODAL FUNCTIONS
+        function openModal(id) {
+            const pokemon = pokemons.find(p => p.id === id);
+            if (!pokemon) return;
+
+            document.getElementById('modal-image').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.img}.png`;
+            document.getElementById('modal-id').textContent = `#${String(pokemon.id).padStart(3, '0')}`;
+            document.getElementById('modal-name').textContent = pokemon.name;
+            document.getElementById('modal-height').textContent = pokemon.height;
+            document.getElementById('modal-weight').textContent = pokemon.weight;
+            document.getElementById('modal-desc').textContent = pokemon.desc;
+
+            // Header Background Matching Type Color
+            const headerAccent = document.getElementById('modal-accent-bg');
+            const mainType = pokemon.types[0];
+            headerAccent.className = `h-32 w-full absolute top-0 left-0 opacity-40 rounded-t-3xl transition-all duration-300 ${typeColors[mainType]?.split(' ')[0] || 'bg-slate-700'}`;
+
+            // Render Types
+            const typesContainer = document.getElementById('modal-types');
+            typesContainer.innerHTML = "";
+            pokemon.types.forEach(type => {
+                const badge = document.createElement('span');
+                badge.className = `text-xs font-bold px-3 py-1 rounded-full border ${typeColors[type] || 'bg-slate-500'}`;
+                badge.textContent = type;
+                typesContainer.appendChild(badge);
+            });
+
+            // Render Progress Stats
+            const statsContainer = document.getElementById('modal-stats-container');
+            statsContainer.innerHTML = "";
+            
+            const statLabels = {
+                hp: 'Vida (HP)',
+                attack: 'Ataque',
+                defense: 'Defesa',
+                speed: 'Velocidade'
+            };
+
+            const statColors = {
+                hp: 'bg-emerald-500',
+                attack: 'bg-red-500',
+                defense: 'bg-blue-500',
+                speed: 'bg-yellow-500'
+            };
+
+            Object.entries(pokemon.stats).forEach(([key, value]) => {
+                const percentage = Math.min((value / 180) * 100, 100);
+                const statHtml = `
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <span class="text-slate-400">${statLabels[key]}</span>
+                            <span class="text-slate-200 font-bold">${value}</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="h-2 rounded-full ${statColors[key]}" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                statsContainer.insertAdjacentHTML('beforeend', statHtml);
+            });
+
+            // Toggle show
+            const modal = document.getElementById('pokemon-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('modal-container').classList.remove('scale-95');
+                document.getElementById('modal-container').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.remove('scale-100');
+            document.getElementById('modal-container').classList.add('scale-95');
+            setTimeout(() => {
+                document.getElementById('pokemon-modal').classList.add('hidden');
+            }, 150);
+        }
+
+        // Close on backdrop click
+        document.getElementById('pokemon-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('pokemon-modal')) {
+                closeModal();
+            }
+        });
+
+
+        // 3. MINIGAME: WHO'S THAT POKEMON LOGIC
+        function startNewGameRound() {
+            // Hide feedback and Next button
+            document.getElementById('game-feedback').className = "hidden p-4 rounded-xl text-center font-bold text-sm transition-all duration-300";
+            document.getElementById('game-feedback').innerHTML = "";
+            document.getElementById('game-next-btn').classList.add('hidden');
+
+            // Reset Silhouette
+            const img = document.getElementById('game-pokemon-img');
+            img.classList.add('silhouette');
+            img.classList.remove('revealed');
+
+            // Select a random pokemon
+            const randomIndex = Math.floor(Math.random() * pokemons.length);
+            currentGamePokemon = pokemons[randomIndex];
+
+            // Setup Image
+            img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentGamePokemon.img}.png`;
+
+            // Set up 4 distinct options
+            let options = [currentGamePokemon.name];
+            while (options.length < 4) {
+                const optIdx = Math.floor(Math.random() * pokemons.length);
+                const optName = pokemons[optIdx].name;
+                if (!options.includes(optName)) {
+                    options.push(optName);
+                }
+            }
+
+            // Shuffle options
+            options.sort(() => Math.random() - 0.5);
+
+            // Render Options Buttons
+            const optContainer = document.getElementById('game-options');
+            optContainer.innerHTML = "";
+
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.className = "game-opt-btn bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-xl py-3 px-4 font-bold transition duration-200 text-left capitalize focus:outline-none flex justify-between items-center";
+                btn.onclick = () => handleGameAnswer(option, btn);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function handleGameAnswer(selectedOption, clickedButton) {
+            // Disable all options buttons to prevent multiple clicks
+            document.querySelectorAll('.game-opt-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+                if (btn.textContent.trim() === currentGamePokemon.name) {
+                    btn.classList.add('border-emerald-500', 'text-emerald-400', 'bg-emerald-950/20');
+                    btn.insertAdjacentHTML('beforeend', '<span>✅</span>');
+                }
+            });
+
+            const img = document.getElementById('game-pokemon-img');
+            img.classList.remove('silhouette');
+            img.classList.add('revealed');
+
+            const feedback = document.getElementById('game-feedback');
+            feedback.classList.remove('hidden');
+
+            if (selectedOption === currentGamePokemon.name) {
+                // Correct Answer
+                gameScore += 10;
+                gameStreak++;
+                document.getElementById('game-score').textContent = gameScore;
+                document.getElementById('game-streak').textContent = gameStreak;
+
+                clickedButton.classList.remove('opacity-50');
+                clickedButton.classList.add('border-emerald-500', 'bg-emerald-900/30', 'text-emerald-300', 'shadow-[0_0_10px_rgba(16,185,129,0.3)]');
+                
+                feedback.className = "p-4 rounded-xl text-center font-bold text-sm bg-emerald-950/60 text-emerald-300 border border-emerald-800 transition-all duration-300";
+                feedback.innerHTML = `🎉 Parabéns! Você acertou, é o <strong>${currentGamePokemon.name}</strong>! (+10 pts)`;
+            } else {
+                // Wrong Answer
+                gameStreak = 0;
+                document.getElementById('game-streak').textContent = gameStreak;
+
+                clickedButton.classList.remove('opacity-50');
+                clickedButton.classList.add('border-red-500', 'bg-red-900/30', 'text-red-300');
+                clickedButton.insertAdjacentHTML('beforeend', '<span>❌</span>');
+
+                feedback.className = "p-4 rounded-xl text-center font-bold text-sm bg-red-950/60 text-red-300 border border-red-900 transition-all duration-300";
+                feedback.innerHTML = `❌ Ops, palpite errado! Esse é o <strong>${currentGamePokemon.name}</strong>. Tente novamente!`;
+            }
+
+            // Show next button
+            document.getElementById('game-next-btn').classList.remove('hidden');
+        }
+
+
+        // 4. CARD CREATOR LOGIC
+        function setupCardCreatorOptions() {
+            const select = document.getElementById('card-input-pokemon');
+            pokemons.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.name;
+                select.appendChild(opt);
+            });
+        }
+
+        function setTrainerAvatar(type) {
+            // Manage UI borders
+            document.querySelectorAll('.avatar-select-btn').forEach(btn => {
+                btn.classList.remove('border-pokeYellow', 'ring-2', 'ring-pokeYellow/50');
+                btn.classList.add('border-slate-700');
+            });
+
+            const eventTarget = window.event.currentTarget;
+            eventTarget.classList.add('border-pokeYellow', 'ring-2', 'ring-pokeYellow/50');
+            eventTarget.classList.remove('border-slate-700');
+
+            const avatars = {
+                'trainer_red': "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/1.png",
+                'trainer_blue': "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/2.png",
+                'trainer_leaf': "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/10.png",
+                'trainer_ethan': "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/trainers/80.png"
+            };
+
+            selectedTrainerAvatarUrl = avatars[type] || avatars['trainer_red'];
+            updateTrainerCard();
+        }
+
+        function setCardTheme(gradientClass) {
+            selectedCardTheme = gradientClass;
+            updateTrainerCard();
+        }
+
+        function updateTrainerCard() {
+            const name = document.getElementById('card-input-name').value || "Mestre Pokémon";
+            const region = document.getElementById('card-input-region').value;
+            const pokemonId = parseInt(document.getElementById('card-input-pokemon').value);
+            const partner = pokemons.find(p => p.id === pokemonId) || pokemons[0];
+
+            // Render to Preview DOM
+            document.getElementById('card-trainer-name').textContent = name;
+            document.getElementById('card-trainer-region').textContent = region;
+            document.getElementById('card-trainer-partner').textContent = partner.name;
+            
+            // Images Update
+            document.getElementById('card-trainer-avatar').src = selectedTrainerAvatarUrl;
+            document.getElementById('card-pokemon-partner-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${partner.img}.png`;
+            
+            // Themes Update
+            const previewEl = document.getElementById('trainer-card-preview');
+            previewEl.className = `w-full max-w-md ${selectedCardTheme} rounded-3xl p-6 shadow-2xl relative overflow-hidden border-4 border-yellow-400 aspect-[1.58/1]`;
+        }
+    </script>
+</body>
+</html>
